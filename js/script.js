@@ -1,5 +1,5 @@
 // ENDEREÇO EHTEREUM DO CONTRATO
-var contractAddress = "0xB0a38B11663729Bf768Ed215A86962286a1eDaE9";
+var contractAddress = "0x0D29d84DA8bfF8bCB5f44ebC112E6c4c9357D3E1";
 
 // Inicializa o objeto DApp
 document.addEventListener("DOMContentLoaded", onDocumentLoad);
@@ -39,7 +39,7 @@ const DApp = {
   },
 
   // Atualiza 'DApp.account' para a conta ativa no Metamask
-  updateAccount: async function() {
+  updateAccount: async function () {
     DApp.account = (await DApp.web3.eth.getAccounts())[0];
     atualizaInterface();
   },
@@ -54,47 +54,52 @@ const DApp = {
   render: async function () {
     inicializaInterface();
   },
-  
+
 };
 // *** MÉTODOS (de consulta - view) DO CONTRATO ** //
 
-  function verRateio() {
-    return DApp.contracts.Horses_race.methods.apportionment().call();
-  }
-  
-  function verPreco() {
-    return DApp.contracts.Horses_race.methods.get_minimum_bet().call();
-  }
-  
-  function verVencedor() {
-    return DApp.contracts.Horses_race.methods.get_winning_horse().call();
-  }
-  
-  function verPremio() {
-    return DApp.contracts.Horses_race.methods.check_prize().call();
-  }
+function verRateio() {
+  return DApp.contracts.Horses_race.methods.apportionment().call();
+}
 
-  function verTotal() {
-    return DApp.contracts.Horses_race.methods.get_amount().call();
-  }
-  
-  // *** MÉTODOS (de escrita) DO CONTRATO ** //
-  function apostar() {
-    let valor = document.getElementById("valor").value;
-    let cavalo =  document.getElementById("cavalo").value;
-    return DApp.contracts.Horses_race.methods.make_bet(cavalo).send({ from: DApp.account, value: valor }).then(atualizaInterface);;
-  }
-  
-  function correr() {
-    return DApp.contracts.Horses_race.methods.run_horses().send({ from: DApp.account }).then(atualizaInterface);;
-  }
+function verPreco() {
+  return DApp.contracts.Horses_race.methods.get_minimum_bet().call();
+}
 
-  // *** ATUALIZAÇÃO DO HTML *** //
+function verVencedor() {
+  return DApp.contracts.Horses_race.methods.get_winning_horse().call();
+}
+
+function verPremio() {
+  return DApp.contracts.Horses_race.methods.check_prize().call();
+}
+
+function verTotal() {
+  return DApp.contracts.Horses_race.methods.get_amount().call();
+}
+
+// *** MÉTODOS (de escrita) DO CONTRATO ** //
+function apostar() {
+  let valor = document.getElementById("valor").value;
+  let cavalo = document.getElementById("cavalo").value;
+  return DApp.contracts.Horses_race.methods.make_bet(cavalo).send({ from: DApp.account, value: valor }).then(atualizaInterface);;
+}
+
+function correr() {
+  return DApp.contracts.Horses_race.methods.run_horses().send({ from: DApp.account }).then(atualizaInterface);
+}
+
+function sacar() {
+  return DApp.contracts.Horses_race.methods.withdraw_prize().send({ from: DApp.account }).then(atualizaInterface);
+}
+
+// *** ATUALIZAÇÃO DO HTML *** //
 
 function inicializaInterface() {
-    document.getElementById("btnCorrer").onclick = correr;
-    document.getElementById("btnApostar").onclick = apostar;
-    atualizaInterface(); 
+  document.getElementById("btnCorrer").onclick = correr;
+  document.getElementById("btnApostar").onclick = apostar;
+  document.getElementById("btnSacar").onclick = sacar;
+  atualizaInterface();
 }
 
 function atualizaInterface() {
