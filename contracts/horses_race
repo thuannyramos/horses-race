@@ -1,0 +1,88 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+// Nome: Thuanny Ramos Machado de Souza
+// Conta do contrato: 0xB0a38B11663729Bf768Ed215A86962286a1eDaE9
+
+pragma solidity ^0.7.0;
+pragma experimental ABIEncoderV2;
+
+contract horses_race{
+    struct Bets {
+        uint value;
+        uint horse;
+    }
+
+    mapping (address => Bets[]) bets_per_user;
+    address owner;
+    uint minimum_bet = 0.1 ether;
+    uint constant horse_quantity = 5;
+    uint[horse_quantity] horsers;
+    uint winning_horse;
+
+    constructor() public {
+		owner =  msg.sender;
+	}
+
+	modifier onlyOwner {
+		require(msg.sender == owner, "Somente o dono do contrato pode invocar essa funcao!");
+		_;
+	}
+
+    function make_bet(uint horse_number) public payable{
+        require(msg.value >= minimum_bet, "Valor menor que a aposta minima.");
+        require(horse_number < horse_quantity, "Cavalo nao disponivel.");
+        bets_per_user[msg.sender].push(Bets(msg.value, horse_number));
+        horsers[horse_number] += msg.value;
+    }
+
+    function get_amount_per_horse(uint horse_number) public view returns (uint){
+        require(horse_number < horse_quantity, "Cavalo nao disponivel.");
+        return horsers[horse_number];
+    }
+
+    function get_amount() public view returns (uint){
+        return address(this).balance * 70 / 100;
+    }
+
+    function get_bets() public view returns (Bets[] memory bets){
+       return bets_per_user[msg.sender];
+    }
+
+    function run_horses() public onlyOwner returns (uint){
+        winning_horse = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender))) % horse_quantity;
+        return winning_horse;
+    }
+
+    function apportionment() public view returns (uint){
+        uint total = get_amount();
+        uint total_horse = horsers[winning_horse];
+        if (total_horse == 0){
+            return 0;
+        }
+        return total / total_horse;
+    }
+
+    function check_prize() public view returns (uint){
+        uint total = 0;
+        for(uint i = 0; i < bets_per_user[msg.sender].length; i++){
+            if (bets_per_user[msg.sender][i].horse == winning_horse){
+                total += bets_per_user[msg.sender][i].value;
+            }
+        }
+        return total * apportionment();
+    }
+
+    function withdraw_prize() external returns (uint){
+        uint prize = check_prize();
+        msg.sender.transfer(prize);
+        return prize;
+    }
+
+    function get_winning_horse() public view returns (uint){
+        return winning_horse;
+    }
+
+    function get_minimum_bet() public view returns(uint){
+        return minimum_bet;
+    }
+}
