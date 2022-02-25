@@ -11,3 +11,5 @@ DApp: Front End → Smart Contract → Blockchain
 Basicamente um DApp é um app armazenado em uma rede blockchain, onde o smart contract é o que permite que ele se conecte ao blockchain.
 
 Nesse sentido, foi construido um contrato que simula um sistema de apostas de corrida de cavalos no qual é possível apostar em qual cavalo será o campeão.
+
+É possível acessar o DApp no link: https://thuannyramos.github.io/horses-race/
