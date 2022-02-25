@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 // Nome: Thuanny Ramos Machado de Souza
-// Conta do contrato: 0xB0a38B11663729Bf768Ed215A86962286a1eDaE9
+// Conta do contrato: 0xBF59733dBD56319f89d3a14d081589099162d3e2
 
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
@@ -55,11 +55,11 @@ contract horses_race{
 
     function apportionment() public view returns (uint){
         uint total = get_amount();
-        uint total_horse = horsers[winning_horse];
+        uint total_horse = get_amount_per_horse(winning_horse);
         if (total_horse == 0){
             return 0;
         }
-        return total / total_horse;
+        return (total * 1 ether/ total_horse);
     }
 
     function check_prize() public view returns (uint){
@@ -69,7 +69,7 @@ contract horses_race{
                 total += bets_per_user[msg.sender][i].value;
             }
         }
-        return total * apportionment();
+        return (total/1000000000000000000) * apportionment();
     }
 
     function withdraw_prize() external returns (uint){
